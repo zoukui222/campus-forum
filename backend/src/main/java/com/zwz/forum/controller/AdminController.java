@@ -59,7 +59,7 @@ public class AdminController {
         return Result.success("板块删除成功");
     }
 
-    @RequireAdmin // 只有超级管理员才能任命
+    @RequireAdmin(superAdminOnly = true) // 版主任免属敏感操作，仅超级管理员可调用
     @Operation(summary = "任命/撤销板主")
     @PostMapping("/appoint")
     public Result<String> appointModerator(@RequestBody @Valid ModeratorAppointRequest req) {

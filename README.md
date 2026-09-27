@@ -114,7 +114,20 @@ npm run dev          # Vite 默认 http://localhost:5173
         └── views/                   页面：auth（登录注册）、forum（帖子）、user（个人中心与私信）、moderator（版主台）、admin（管理后台）
 ```
 
-## 五、数据库设计
+## 五、权限设计
+
+系统采用三级角色（`USER` / `MODERATOR` / `ADMIN`），鉴权分为**四层**，任何一层拦截都会返回 403：
+
+| 层级 | 位置 | 作用 |
+| --- | --- | --- |
+| 1. 认证 | `JwtAuthenticationFilter` | 解析 `Authorization: Bearer <token>`，从 token 的 claims 中取出 `userId` 与 `role`，还原为 `ROLE_USER` / `ROLE_MODERATOR` / `ROLE_ADMIN` 权限标识 |
+| 2. 路由级鉴权 | `SecurityConfig` | `/api/admin/**` 要求 `ADMIN` 或 `MODERATOR` 角色；公开接口（`/api/auth/**`、`/api/public/**`、接口文档、静态资源）显式放行 |
+| 3. 接口级鉴权 | `@RequireAdmin` 注解 + `AdminAspect` 切面 | 切面**从数据库读取真实角色**做校验（不信任客户端传入的任何字段）；注解支持 `superAdminOnly = true`，用于版主任免这类敏感操作，防止版主之间互相提权 |
+| 4. 数据级鉴权 | Service 层 | 帖子删除校验「作者本人 / 管理员 / 该板块版主」三种身份，帖子编辑与评论删除校验作者或管理员 |
+
+> 说明：JWT 中的角色在**签发时固定**，因此管理员调整某用户角色后，该用户需要重新登录才会获得新权限。
+
+## 六、数据库设计
 
 | 表名 | 说明 |
 | --- | --- |
@@ -124,7 +137,7 @@ npm run dev          # Vite 默认 http://localhost:5173
 | `forum_comment` | 评论（支持按帖子聚合） |
 | `sys_message` | 站内私信 |
 
-## 六、接口分组
+## 七、接口分组
 
 | 路径前缀 | 模块 | 访问要求 |
 | --- | --- | --- |
@@ -134,9 +147,9 @@ npm run dev          # Vite 默认 http://localhost:5173
 | `/api/comment` | 评论 | 登录态 |
 | `/api/message` | 站内私信 | 登录态 |
 | `/api/user` | 个人资料 | 登录态 |
-| `/api/admin` | 管理后台 | 管理员 |
+| `/api/admin` | 管理后台 | 管理员 / 版主 |
 | `/upload` | 图片上传 | 登录态 |
 
-## 七、License
+## 八、License
 
 本项目采用[木兰宽松许可证，第 2 版](LICENSE)（Mulan PSL v2）。

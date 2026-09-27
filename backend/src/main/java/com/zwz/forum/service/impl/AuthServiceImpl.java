@@ -63,6 +63,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 3. 生成 Token
-        return new LoginResult(jwtUtils.generateToken(user.getId(), user.getUsername()),user);
+        return new LoginResult(jwtUtils.generateToken(user.getId(), user.getUsername(), user.getRole()),user);
     }
 }

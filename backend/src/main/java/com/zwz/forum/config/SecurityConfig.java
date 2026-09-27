@@ -54,6 +54,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                         .requestMatchers("/doc.html", "/webjars/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/file/**").permitAll() // 放行静态资源访问
+                        // 管理端接口需要管理员或版主角色，与 @RequireAdmin 切面形成两层校验：
+                        // 即使某个接口漏标注解，普通用户也无法直接调用
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "MODERATOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

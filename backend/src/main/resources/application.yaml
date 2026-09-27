@@ -19,6 +19,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/campus_forum?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
 
+# JWT 签名密钥（原先硬编码在代码中，现改为配置注入；生产环境通过环境变量 JWT_SECRET 覆盖）
+jwt:
+  secret: ${JWT_SECRET:CampusForumDevSecretChangeMe2025!!!}
+
 knife4j:
   enable: true
   setting:

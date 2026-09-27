@@ -50,13 +50,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (claims != null) {
             Long userId = claims.get("userId", Long.class);
             String username = claims.getSubject();
+            // 角色取自 token，映射为 Spring Security 的 authority：ROLE_USER / ROLE_MODERATOR / ROLE_ADMIN
+            String role = claims.get("role", String.class);
+            if (!StringUtils.hasText(role)) {
+                role = "USER"; // 兼容未携带角色的旧 token
+            }
 
-            // 这里为了 MVP 简单，我们暂时只给一个默认 USER 权限
-            // 如果后续需要管理员权限，可以从 claims 里取 role
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userId, // Principal (这里我们直接存 userId，方便后续获取)
                     null,
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")) // Authorities
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role)) // Authorities
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
