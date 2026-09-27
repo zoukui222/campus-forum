@@ -1,0 +1,46 @@
+# 编译输出
+backend/target/
+frontend/dist/
+frontend/node_modules/
+
+# 环境文件
+.env
+.env.local
+.env.*.local
+
+# IDE文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+logs
+*.log
+
+# 数据库文件
+*.db
+*.sqlite
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+
+# 运行时上传目录（用户上传的图片，不入库）
+backend/file/
+file/
+
+# 本地配置（含真实数据库 / Redis 密码与文件路径）
+backend/src/main/resources/application-local.yaml
+
+# IDE 插件产物
+.github/
+
+# AI 辅助开发工具说明（如需保留可移除本行）
+# frontend/CLAUDE.md
