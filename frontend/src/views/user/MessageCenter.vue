@@ -124,7 +124,8 @@ import {
   markMessageRead,
   markAllRead,
   getUnreadDetails,
-  type MessageVO
+  type MessageVO,
+  MessageType
 } from '@/api/message'
 import { useUserStore } from '@/store/userStore'
 import { useRouter } from 'vue-router'
@@ -144,10 +145,11 @@ const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726
 
 let statsTimer: any = null
 
-const unreadMap = reactive<Record<string, number>>({
-  CHAT: 0,
-  COMMENT: 0,
-  SYSTEM: 0
+// 用 MessageType 作为键的精确映射，避免 Record<string, number> 索引访问返回 undefined
+const unreadMap = reactive<Record<MessageType, number>>({
+  [MessageType.CHAT]: 0,
+  [MessageType.COMMENT]: 0,
+  [MessageType.SYSTEM]: 0
 })
 
 const parseCOMMENTMsg = (content: string) => {

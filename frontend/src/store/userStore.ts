@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { login as loginApi } from '@/api/auth'
+import { login as loginApi, type LoginForm } from '@/api/auth'
 import router from '@/router'
 
 export const useUserStore = defineStore('user', () => {
@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
 
   // Actions
   // 处理登录逻辑
-  const handleLogin = async (loginForm) => {
+  const handleLogin = async (loginForm: LoginForm) => {
     try {
       // 调用 API
       const res = await loginApi(loginForm)
