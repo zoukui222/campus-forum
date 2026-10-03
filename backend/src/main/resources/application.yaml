@@ -6,6 +6,10 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: forum
+  mvc:
+    # AI 对话用 SSE 长连接推送，一次可能持续数十秒，容器默认 30s 会把连接提前掐断
+    async:
+      request-timeout: 300000
   data:
     redis:
       port: ${REDIS_PORT:6379}
@@ -37,3 +41,18 @@ service:
 
 server:
   port: 8080
+
+# ============ AI Agent 配置 ============
+# api-key 密钥不入版本库：本地开发写 application-local.yaml，部署环境注入环境变量 AI_API_KEY
+ai:
+  base-url: ${AI_BASE_URL:https://api.deepseek.com}
+  api-key: ${AI_API_KEY:}
+  model: ${AI_MODEL:deepseek-chat}
+  connect-timeout: 10
+  request-timeout: 120
+  # 单次对话最多允许的工具调用轮次，防止模型反复调用同一工具陷入死循环
+  max-iterations: 5
+  temperature: 0.3
+  # 单个工具结果回灌给模型前的截断长度，避免上下文爆炸
+  tool-result-limit: 4000
+  audit-enabled: true

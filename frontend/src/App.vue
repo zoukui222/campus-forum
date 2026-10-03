@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import AiAssistant from '@/components/AiAssistant.vue'
 </script>
 
 <template>
   <div id="app">
     <RouterView />
+    <!-- 校园小助手：组件内部用 Pinia 里的 token 判断是否登录，未登录不渲染 -->
+    <AiAssistant />
   </div>
 </template>
 
